@@ -13,9 +13,23 @@
         android:theme="@style/Theme.ATSOPTANDROID"
         tools:targetApi="31">
         <activity
+            android:name=".login.MyActivity"
+            android:exported="false"
+            android:label="@string/title_activity_my"
+            android:theme="@style/Theme.ATSOPTANDROID" />
+        <activity
+            android:name=".login.SignUpActivity"
+            android:exported="false"
+            android:label="@string/title_activity_sign_up"
+            android:theme="@style/Theme.ATSOPTANDROID" />
+        <activity
+            android:name=".login.SignInActivity"
+            android:exported="false"
+            android:label="@string/title_activity_sign_in"
+            android:theme="@style/Theme.ATSOPTANDROID" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ATSOPTANDROID">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
