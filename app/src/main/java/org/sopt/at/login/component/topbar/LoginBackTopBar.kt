@@ -1,4 +1,4 @@
-package org.sopt.at.login.component
+package org.sopt.at.login.component.topbar
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
@@ -11,9 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import org.sopt.at.R
-import org.sopt.at.ui.theme.ATSOPTANDROIDTheme
 
 @Composable
 fun LoginBackTopBar(modifier: Modifier = Modifier){
@@ -29,12 +27,5 @@ fun LoginBackTopBar(modifier: Modifier = Modifier){
                 (context as? ComponentActivity)?.finish()
             }
         )
-    }
-}
-@Preview
-@Composable
-private fun TestTopBar(){
-    ATSOPTANDROIDTheme {
-        LoginBackTopBar()
     }
 }
