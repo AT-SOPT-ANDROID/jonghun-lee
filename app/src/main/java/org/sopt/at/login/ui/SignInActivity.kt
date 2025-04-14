@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.sopt.at.util.SharedPreferencesManager
-import org.sopt.at.login.component.LoginBackTopBar
-import org.sopt.at.login.component.LoginTextField
+import org.sopt.at.login.component.topbar.LoginBackTopBar
+import org.sopt.at.login.component.logintextfield.LoginTextField
 import org.sopt.at.ui.theme.ATSOPTANDROIDTheme
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
@@ -75,16 +75,6 @@ fun LoginScreen(){
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-
-//    val signedId = remember { mutableStateOf("") }
-//    val signedPassword = remember { mutableStateOf("") }
-//    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//        if (result.resultCode == Activity.RESULT_OK) {
-//            signedId.value = result.data?.getStringExtra("userId") ?: ""
-//            signedPassword.value = result.data?.getStringExtra("userPassword") ?: ""
-//
-//        }
-//    }
     val (savedId, savedPw) = SharedPreferencesManager.getUser(context)
     val userId = remember { mutableStateOf("") }
     val userPassword = remember { mutableStateOf("") }
@@ -123,10 +113,6 @@ fun LoginScreen(){
                     if (userId.value == savedId && userPassword.value == savedPw) {
                         SharedPreferencesManager.setLoggedIn(context, true)
                         val intent = Intent(context, MyActivity::class.java)
-//                            .apply {
-//                            putExtra("userId", userId.value)
-//                            putExtra("userPassword", userPassword.value)
-//                        }
                         context.startActivity(intent)
                     } else {
                         coroutineScope.launch {
@@ -184,7 +170,6 @@ fun LoginScreen(){
                     color = Color.LightGray,
                     fontSize = 16.sp,
                     modifier = Modifier.clickable {
-//                        launcher.launch(Intent(context, SignUpActivity::class.java))
                         val intent = Intent(context, SignUpActivity::class.java)
                         context.startActivity(intent)
                         userId.value = ""
