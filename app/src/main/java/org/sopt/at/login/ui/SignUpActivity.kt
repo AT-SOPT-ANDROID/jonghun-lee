@@ -30,8 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.at.util.SharedPreferencesManager
-import org.sopt.at.login.component.LoginBackTopBar
-import org.sopt.at.login.component.LoginTextField
+import org.sopt.at.login.component.topbar.LoginBackTopBar
+import org.sopt.at.login.component.logintextfield.LoginTextField
+import org.sopt.at.login.component.logintextfield.TvingValidator
 import org.sopt.at.ui.theme.ATSOPTANDROIDTheme
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
@@ -71,24 +72,17 @@ fun SignUpScreen() {
             Button(
                 onClick = {
                     if (!isPassword.value){
-                        val idPattern = Regex("^[a-z0-9]{6,12}$")
-                        if (!idPattern.matches(userId.value)){
+                        if (!TvingValidator.validateId(userId.value)){
                             Toast.makeText(context,"아이디 형식이 이상해요.", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
                         isPassword.value = true
                     }else{
-                        val pwPattern = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#\$%^&*])[A-Za-z\\d~!@#\$%^&*]{8,15}\$")
-                        if (!pwPattern.matches(userPassword.value)){
+                        if (!TvingValidator.validatePassword(userPassword.value)){
                             Toast.makeText(context,"비밀번호 형식이 이상해요.", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
                         SharedPreferencesManager.saveUser(context, userId.value, userPassword.value)
-//                        val resultIntent = Intent().apply {
-//                            putExtra("userId", userId.value)
-//                            putExtra("userPassword", userPassword.value)
-//                        }
-//                        (context as? Activity)?.setResult(Activity.RESULT_OK, resultIntent)
                         (context as? Activity)?.finish()
                     }
                 },
