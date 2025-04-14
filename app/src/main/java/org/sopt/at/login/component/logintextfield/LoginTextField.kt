@@ -1,4 +1,4 @@
-package org.sopt.at.login.component
+package org.sopt.at.login.component.logintextfield
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
