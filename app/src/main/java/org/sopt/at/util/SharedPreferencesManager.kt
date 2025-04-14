@@ -2,7 +2,7 @@ package org.sopt.at.util
 
 import android.content.Context
 import androidx.core.content.edit
-//Todo 읽기 비용이 큰 sharedPreferences 같은 경우 뷰모델을 활용한 데이터 전달 과정 필요. 2주차 과제 때 수정 예정
+// 읽기 비용이 큰 sharedPreferences 같은 경우 뷰모델을 활용한 데이터 전달 과정 필요. 2주차 과제 때 수정 예정
 object SharedPreferencesManager {
     private const val PREFS_NAME = "fred_login_data"
     private const val USER_ID = "user_id"
