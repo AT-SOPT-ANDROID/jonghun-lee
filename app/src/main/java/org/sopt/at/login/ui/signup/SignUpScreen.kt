@@ -1,11 +1,8 @@
-package org.sopt.at.login.ui
+package org.sopt.at.login.ui.signup
 
 import android.app.Activity
-import android.os.Bundle
+import android.content.Intent
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -19,74 +16,64 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.sopt.at.util.SharedPreferencesManager
 import org.sopt.at.login.component.topbar.LoginBackTopBar
 import org.sopt.at.login.component.logintextfield.LoginTextField
 import org.sopt.at.login.component.logintextfield.TvingValidator
-import org.sopt.at.ui.theme.ATSOPTANDROIDTheme
+import org.sopt.at.login.ui.signin.SignInActivity
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
 
-class SignUpActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            ATSOPTANDROIDTheme {
-                SignUpScreen()
-                }
-            }
-        }
-    }
 
-@Preview(showBackground = true)
 @Composable
-fun SignUpScreen() {
-    val userId = remember { mutableStateOf("") }
-    val userPassword = remember { mutableStateOf("") }
-    val isPassword = remember { mutableStateOf(false) }
-    val passwordVisible = remember { mutableStateOf(false) }
+fun SignUpScreen(viewModel: SignUpViewModel){
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-
+    if (uiState.isSignUpComplete){
+        context.startActivity(Intent(context, SignInActivity::class.java))
+        (context as? Activity)?.finish()
+    }
     Scaffold(
-        modifier = Modifier.fillMaxSize().background(color = Color.Black).padding(horizontal = 15.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Black)
+            .padding(horizontal = 15.dp),
         containerColor = Color.Black,
         bottomBar = {
-            val isButtonEnabled = if (!isPassword.value) {
-                userId.value.isNotBlank()
+            val isButtonEnabled = if (!uiState.isPassword) {
+                uiState.userId.isNotBlank()
             } else {
-                userPassword.value.isNotBlank()
+                uiState.userPassword.isNotBlank()
             }
-
             Button(
                 onClick = {
-                    if (!isPassword.value){
-                        if (!TvingValidator.validateId(userId.value)){
-                            Toast.makeText(context,"아이디 형식이 이상해요.", Toast.LENGTH_SHORT).show()
+                    if (!uiState.isPassword) {
+                        if (!TvingValidator.validateId(uiState.userId)) {
+                            Toast.makeText(context, "아이디 형식이 이상해요.", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        isPassword.value = true
-                    }else{
-                        if (!TvingValidator.validatePassword(userPassword.value)){
-                            Toast.makeText(context,"비밀번호 형식이 이상해요.", Toast.LENGTH_SHORT).show()
+                        viewModel.isPassword()
+                    } else {
+                        if (!TvingValidator.validatePassword(uiState.userPassword)) {
+                            Toast.makeText(context, "비밀번호 형식이 이상해요.", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        SharedPreferencesManager.saveUser(context, userId.value, userPassword.value)
-                        (context as? Activity)?.finish()
+                        viewModel.signUp()
+
                     }
                 },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 40.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 40.dp)
                     .border(width = 0.5.dp, color = Color.LightGray, shape = RoundedCornerShape(4.dp)),
                 enabled = isButtonEnabled,
                 shape = RoundedCornerShape(4.dp),
@@ -113,16 +100,16 @@ fun SignUpScreen() {
 
             Text(
                 modifier = Modifier.fillMaxWidth().padding(top = 30.dp),
-                text = if(!isPassword.value) "아이디를 입력해주세요." else "비밀번호를 입력해주세요.",
+                text = if(!uiState.isPassword) "아이디를 입력해주세요." else "비밀번호를 입력해주세요.",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
-            if(!isPassword.value) {
+            if(!uiState.isPassword) {
                 LoginTextField(
-                    value = userId.value,
-                    onValueChange = { userId.value = it },
+                    value = uiState.userId,
+                    onValueChange = viewModel::updateUserId,
                     placeholder = "아이디",
                     modifier = Modifier.padding(top = 20.dp),
                 )
@@ -134,13 +121,13 @@ fun SignUpScreen() {
                 )
             }else{
                 LoginTextField(
-                    value = userPassword.value,
-                    onValueChange = { userPassword.value = it },
+                    value = uiState.userPassword,
+                    onValueChange = viewModel::updateUserPassword,
                     placeholder = "비밀번호",
                     modifier = Modifier.padding(top = 20.dp),
                     isPassword = true,
-                    passwordVisible = passwordVisible.value,
-                    onVisibilityToggle = {passwordVisible.value = !passwordVisible.value}
+                    passwordVisible = uiState.isPasswordVisible,
+                    onVisibilityToggle = viewModel::togglePasswordVisibility
                 )
                 Text(
                     text = "영문 숫자, 특수문자(~!@#$%^&*)조합 8~15자리",
@@ -153,3 +140,4 @@ fun SignUpScreen() {
         }
     }
 }
+
