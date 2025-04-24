@@ -46,7 +46,7 @@ fun HomeSubSlideItem(subBanner: SubBannerItem, isRank: Boolean = true) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .width(120.dp)
-                .height(150.dp)
+                .height(165.dp)
                 .clip(RoundedCornerShape(5.dp))
         )
 
