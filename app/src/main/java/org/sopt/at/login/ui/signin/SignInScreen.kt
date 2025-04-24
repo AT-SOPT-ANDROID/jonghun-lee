@@ -1,6 +1,7 @@
 package org.sopt.at.login.ui.signin
 
 import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,8 +43,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.sopt.at.login.component.logintextfield.LoginTextField
 import org.sopt.at.login.component.topbar.LoginBackTopBar
-import org.sopt.at.my.MyActivity
 import org.sopt.at.login.ui.signup.SignUpActivity
+import org.sopt.at.main.MainActivity
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
 
@@ -65,7 +66,7 @@ fun SignInScreen(viewModel: SignInViewModel,
         Column(
             modifier = Modifier.fillMaxSize().padding(horizontal = 15.dp)
         ) {
-            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp))
+            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp), onClick = { (context as? ComponentActivity)?.finish()})
             Text(
                 modifier = Modifier.padding(top = 40.dp),
                 text = "TVING ID 로그인",
@@ -94,7 +95,7 @@ fun SignInScreen(viewModel: SignInViewModel,
                 onClick = {
                     val success = viewModel.login()
                     if (success) {
-                        val intent = Intent(context, MyActivity::class.java)
+                        val intent = Intent(context, MainActivity::class.java)
                         context.startActivity(intent)
                     } else {
                         coroutineScope.launch {

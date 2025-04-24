@@ -3,6 +3,7 @@ package org.sopt.at.login.ui.signup
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -96,7 +97,7 @@ fun SignUpScreen(viewModel: SignUpViewModel){
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize())
         {
-            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp))
+            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp), onClick = { (context as? ComponentActivity)?.finish()})
 
             Text(
                 modifier = Modifier.fillMaxWidth().padding(top = 30.dp),

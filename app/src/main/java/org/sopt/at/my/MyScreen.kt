@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,10 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import org.sopt.at.login.component.topbar.LoginBackTopBar
 import org.sopt.at.login.ui.signin.SignInActivity
+import org.sopt.at.navigation.NavItem
 
 @Composable
-fun MyScreen(viewModel: MyViewModel) {
+fun MyScreen(viewModel: MyViewModel, navController: NavHostController) {
     val userId by viewModel.userId.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
@@ -65,8 +67,12 @@ fun MyScreen(viewModel: MyViewModel) {
     )
     {innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize(),
-
             ) {
+            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp),
+                onClick = {navController.navigate(NavItem.MAIN){
+                    popUpTo("main") { inclusive = true }
+                    launchSingleTop = true
+                } })
             Text(modifier = Modifier.fillMaxWidth().padding(top = 100.dp),
                 text = "안녕하세요 : $userId 님",
                 fontSize = 30.sp,
