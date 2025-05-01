@@ -35,7 +35,7 @@ fun LoginTextField(
     modifier: Modifier = Modifier,
     isPassword: Boolean = false,
     passwordVisible: Boolean = false,
-    onVisibilityToggle: (() -> Unit)? = null,
+    onVisibilityToggle: () -> Unit = {},
     singleLine: Boolean = true,
     fontSize: Int = 18
 ) {
@@ -54,7 +54,7 @@ fun LoginTextField(
         textStyle = TextStyle(fontSize = fontSize.sp),
         shape = RoundedCornerShape(8.dp),
         visualTransformation = visual,
-        trailingIcon = if (isPassword && onVisibilityToggle != null) {
+        trailingIcon = if (isPassword) {
             {
                 val visibility = if (passwordVisible) R.drawable.ic_password_visible else R.drawable.ic_password_invisible
                 val description = if (passwordVisible) "비밀번호 숨기기" else "비밀번호 보기"

@@ -1,9 +1,7 @@
-package org.sopt.at.login.ui
+package org.sopt.at.login.ui.signin
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +23,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -38,52 +38,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-import org.sopt.at.util.SharedPreferencesManager
-import org.sopt.at.login.component.topbar.LoginBackTopBar
 import org.sopt.at.login.component.logintextfield.LoginTextField
-import org.sopt.at.ui.theme.ATSOPTANDROIDTheme
+import org.sopt.at.login.component.topbar.LoginBackTopBar
+import org.sopt.at.login.ui.signup.SignUpActivity
+import org.sopt.at.main.MainActivity
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
 
-
-class SignInActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val(signedId, signedPassword) = SharedPreferencesManager.getUser(this)
-        val isLoggedIn = SharedPreferencesManager.isLoggedIn(this)
-        if (isLoggedIn && !signedId.isNullOrBlank() && !signedPassword.isNullOrBlank()) {
-            startActivity(Intent(this, MyActivity::class.java))
-            finish()
-        }
-        setContent {
-            ATSOPTANDROIDTheme {
-                LoginScreen()
-            }
-        }
-    }
-}
-
-
-@Preview(showBackground = true)
 @Composable
-fun LoginScreen(){
-
+fun SignInScreen(viewModel: SignInViewModel,
+                 onNavigateToHome: () -> Unit){
     val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-    val (savedId, savedPw) = SharedPreferencesManager.getUser(context)
-    val userId = remember { mutableStateOf("") }
-    val userPassword = remember { mutableStateOf("") }
-    val passwordVisible = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        if (viewModel.isAutoLoggedIn()) {
+            onNavigateToHome()
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         Column(
             modifier = Modifier.fillMaxSize().padding(horizontal = 15.dp)
         ) {
-            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp))
+            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp), onClick = { (context as? ComponentActivity)?.finish()})
             Text(
                 modifier = Modifier.padding(top = 40.dp),
                 text = "TVING ID 로그인",
@@ -92,27 +75,27 @@ fun LoginScreen(){
                 color = Color.White
             )
             LoginTextField(
-                value = userId.value,
-                onValueChange = { userId.value = it },
+                value = uiState.userId,
+                onValueChange = viewModel::updateUserId,
                 placeholder = "아이디",
                 modifier = Modifier.padding(top = 25.dp)
 
             )
             LoginTextField(
-                value = userPassword.value,
-                onValueChange = { userPassword.value = it },
+                value = uiState.userPassword,
+                onValueChange = viewModel::updateUserPassword,
                 placeholder = "비밀번호",
                 modifier = Modifier.padding(top = 15.dp),
                 isPassword = true,
-                passwordVisible = passwordVisible.value,
-                onVisibilityToggle = { passwordVisible.value = !passwordVisible.value }
+                passwordVisible = uiState.isPasswordVisible,
+                onVisibilityToggle = viewModel::togglePasswordVisiblity
             )
-            val isButtonEnabled = userId.value.isNotBlank() && userPassword.value.isNotBlank()
+            val isButtonEnabled = uiState.userId.isNotBlank() && uiState.userPassword.isNotBlank()
             Button(
                 onClick = {
-                    if (userId.value == savedId && userPassword.value == savedPw) {
-                        SharedPreferencesManager.setLoggedIn(context, true)
-                        val intent = Intent(context, MyActivity::class.java)
+                    val success = viewModel.login()
+                    if (success) {
+                        val intent = Intent(context, MainActivity::class.java)
                         context.startActivity(intent)
                     } else {
                         coroutineScope.launch {
@@ -172,8 +155,6 @@ fun LoginScreen(){
                     modifier = Modifier.clickable {
                         val intent = Intent(context, SignUpActivity::class.java)
                         context.startActivity(intent)
-                        userId.value = ""
-                        userPassword.value = ""
                     }
                 )
             }
