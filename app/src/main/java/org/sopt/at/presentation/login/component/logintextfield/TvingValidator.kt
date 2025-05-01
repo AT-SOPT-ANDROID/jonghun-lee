@@ -1,4 +1,4 @@
-package org.sopt.at.login.component.logintextfield
+package org.sopt.at.presentation.login.component.logintextfield
 
 object TvingValidator {
     val idPattern = Regex("^[a-z0-9]{6,12}$")
