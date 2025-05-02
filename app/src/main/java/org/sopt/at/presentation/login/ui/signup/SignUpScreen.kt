@@ -1,9 +1,6 @@
-package org.sopt.at.login.ui.signup
+package org.sopt.at.presentation.login.ui.signup
 
-import android.app.Activity
-import android.content.Intent
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -26,23 +23,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.sopt.at.login.component.topbar.LoginBackTopBar
-import org.sopt.at.login.component.logintextfield.LoginTextField
-import org.sopt.at.login.component.logintextfield.TvingValidator
-import org.sopt.at.login.ui.signin.SignInActivity
+import androidx.hilt.navigation.compose.hiltViewModel
+import org.sopt.at.presentation.login.component.topbar.LoginBackTopBar
+import org.sopt.at.presentation.login.component.logintextfield.LoginTextField
+import org.sopt.at.presentation.login.component.logintextfield.TvingValidator
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
 
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel){
+fun SignUpRoute(
+    modifier: Modifier,
+    navigateToSignIn: () -> Unit,
+    popBackStack: () -> Unit,
+    viewModel: SignUpViewModel = hiltViewModel()
+){
+    val uiState by viewModel.uiState.collectAsState()
+    if (uiState.isSignUpComplete) {
+        navigateToSignIn()
+    }
+    SignUpScreen(
+        modifier = modifier,
+        onBackClick = popBackStack,
+        viewModel = viewModel,
+    )
+
+}
+@Composable
+fun SignUpScreen(
+    viewModel: SignUpViewModel,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    if (uiState.isSignUpComplete){
-        context.startActivity(Intent(context, SignInActivity::class.java))
-        (context as? Activity)?.finish()
-    }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -97,7 +112,7 @@ fun SignUpScreen(viewModel: SignUpViewModel){
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize())
         {
-            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp), onClick = { (context as? ComponentActivity)?.finish()})
+            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp), onClick = onBackClick)
 
             Text(
                 modifier = Modifier.fillMaxWidth().padding(top = 30.dp),

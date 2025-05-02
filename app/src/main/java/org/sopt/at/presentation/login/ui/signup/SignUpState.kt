@@ -1,4 +1,4 @@
-package org.sopt.at.login.ui.signup
+package org.sopt.at.presentation.login.ui.signup
 
 data class SignUpState(
     val userId: String = "",
