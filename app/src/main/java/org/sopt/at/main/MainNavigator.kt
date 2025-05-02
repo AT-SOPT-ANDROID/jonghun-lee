@@ -33,12 +33,22 @@ class MainNavigator(
 
     //바텀 네비게이션 화면 이동
     fun navigate(tab: MainTab) {
-        val navOptions = navOptions {
-            popUpTo(MainTab.HOME.route) {
-                saveState = true
+
+        val navOptions = if (tab == MainTab.HOME) {
+            navOptions {
+                popUpTo(MainTab.HOME.route) {
+                    inclusive = true
+                }
+                launchSingleTop = true
             }
-            launchSingleTop = true
-            restoreState = true
+        } else {
+            navOptions {
+                popUpTo(MainTab.HOME.route) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
         }
         when (tab) {
             MainTab.HOME -> {
