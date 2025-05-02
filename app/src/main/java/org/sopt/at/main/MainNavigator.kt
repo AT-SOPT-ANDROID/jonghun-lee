@@ -8,12 +8,12 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import org.sopt.at.presentation.login.ui.signin.navigation.SignIn
-import org.sopt.at.presentation.login.ui.signup.ui.navigation.SignUp
-import org.sopt.at.presentation.mypage.navigation.MyPage
 import org.sopt.at.presentation.history.navigation.navigateToHistory
 import org.sopt.at.presentation.home.navigation.navigateToHome
 import org.sopt.at.presentation.live.navigation.navigateToLive
+import org.sopt.at.presentation.login.ui.signin.navigation.navigateToSignIn
+import org.sopt.at.presentation.login.ui.signup.ui.navigation.navigateToSignUp
+import org.sopt.at.presentation.mypage.navigation.navigateToMyPage
 import org.sopt.at.presentation.search.navigation.navigateToSearch
 import org.sopt.at.presentation.shorts.navigation.navigateToShorts
 import org.sopt.at.presentation.splash.navigation.Splash
@@ -85,23 +85,28 @@ class MainNavigator(
 
 
     fun navigateToSignUp() {
-        navController.navigate(SignUp) {
-            popUpTo(navController.graph.id) {
-                inclusive = true
+        navController.navigateToSignUp(
+            navOptions {
+                popUpTo(navController.graph.id) { inclusive = true }
             }
-        }
+        )
     }
 
     fun navigateToSignIn() {
-        navController.navigate(SignIn) {
-            popUpTo(navController.graph.id) {
-                inclusive = true
+        navController.navigateToSignIn(
+            navOptions {
+                popUpTo(navController.graph.id) { inclusive = true }
             }
-        }
+        )
     }
 
     fun navigateToMyPage() {
-        navController.navigate(MyPage)
+        navController.navigateToMyPage(
+            navOptions {
+                launchSingleTop = true
+            }
+        )
+
     }
 
     fun popBackStack() {
