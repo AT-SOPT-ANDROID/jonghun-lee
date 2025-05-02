@@ -1,6 +1,5 @@
-package org.sopt.at.login.component.topbar
+package org.sopt.at.presentation.login.component.topbar
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
@@ -10,9 +9,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import org.sopt.at.R
+import org.sopt.at.component.noRippleClickable
 
 @Composable
-fun LoginBackTopBar(modifier: Modifier = Modifier, onClick:()->Unit){
+fun LoginBackTopBar(
+    onClick:()->Unit,
+    modifier: Modifier = Modifier
+){
     Row(
         modifier = modifier.fillMaxWidth()
     ){
@@ -20,7 +23,8 @@ fun LoginBackTopBar(modifier: Modifier = Modifier, onClick:()->Unit){
             imageVector = ImageVector.vectorResource(R.drawable.ic_back_arrow),
             contentDescription = "뒤로 가기",
             tint = Color.LightGray,
-            modifier = Modifier.clickable { onClick()
+            modifier = Modifier.noRippleClickable {
+                onClick()
             }
         )
     }
