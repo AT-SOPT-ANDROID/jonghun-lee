@@ -1,7 +1,5 @@
-package org.sopt.at.login.ui.signin
+package org.sopt.at.presentation.login.ui.signin
 
-import android.content.Intent
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +21,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -40,33 +36,47 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import org.sopt.at.login.component.logintextfield.LoginTextField
-import org.sopt.at.login.component.topbar.LoginBackTopBar
-import org.sopt.at.login.ui.signup.SignUpActivity
-import org.sopt.at.main.MainActivity
+import org.sopt.at.presentation.login.component.logintextfield.LoginTextField
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
 
 @Composable
-fun SignInScreen(viewModel: SignInViewModel,
-                 onNavigateToHome: () -> Unit){
-    val context = LocalContext.current
+fun SignInRoute(
+    navigateToHome: () -> Unit,
+    navigateToSignUp: () -> Unit,
+    viewModel: SignInViewModel = hiltViewModel()
+) {
+
+    SignInScreen(
+        viewModel = viewModel,
+        navigateToSignUp = navigateToSignUp,
+        navigateToHome = navigateToHome
+    )
+
+}
+
+@Composable
+fun SignInScreen(
+    viewModel: SignInViewModel,
+    navigateToSignUp: () -> Unit,
+    navigateToHome: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        if (viewModel.isAutoLoggedIn()) {
-            onNavigateToHome()
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 15.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 15.dp)
         ) {
-            LoginBackTopBar(modifier = Modifier.padding(top = 25.dp), onClick = { (context as? ComponentActivity)?.finish()})
             Text(
                 modifier = Modifier.padding(top = 40.dp),
                 text = "TVING ID 로그인",
@@ -95,8 +105,7 @@ fun SignInScreen(viewModel: SignInViewModel,
                 onClick = {
                     val success = viewModel.login()
                     if (success) {
-                        val intent = Intent(context, MainActivity::class.java)
-                        context.startActivity(intent)
+                        navigateToHome()
                     } else {
                         coroutineScope.launch {
                             snackBarHostState.showSnackbar(
@@ -107,7 +116,9 @@ fun SignInScreen(viewModel: SignInViewModel,
                     }
                 },
                 enabled = isButtonEnabled,
-                modifier = Modifier.fillMaxWidth().padding(top = 25.dp, bottom = 30.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 25.dp, bottom = 30.dp),
                 shape = RoundedCornerShape(8.dp),
                 contentPadding = PaddingValues(vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -125,7 +136,9 @@ fun SignInScreen(viewModel: SignInViewModel,
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
@@ -153,8 +166,7 @@ fun SignInScreen(viewModel: SignInViewModel,
                     color = Color.LightGray,
                     fontSize = 16.sp,
                     modifier = Modifier.clickable {
-                        val intent = Intent(context, SignUpActivity::class.java)
-                        context.startActivity(intent)
+                        navigateToSignUp()
                     }
                 )
             }
@@ -162,14 +174,14 @@ fun SignInScreen(viewModel: SignInViewModel,
         }
         SnackbarHost(
             hostState = snackBarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter).imePadding().padding(15.dp)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .imePadding()
+                .padding(15.dp)
         )
     }
 
 }
-
-
-
 
 
 //AnnotatedString으로 특정 텍스트에 underline 과 스타일 주기

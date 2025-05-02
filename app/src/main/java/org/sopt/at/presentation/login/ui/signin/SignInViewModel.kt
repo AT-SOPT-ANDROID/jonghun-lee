@@ -1,11 +1,14 @@
-package org.sopt.at.login.ui.signin
+package org.sopt.at.presentation.login.ui.signin
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.sopt.at.login.util.LoginRepository
+import org.sopt.at.presentation.login.util.LoginRepository
+import javax.inject.Inject
 
-class SignInViewModel(private val repository: LoginRepository): ViewModel() {
+@HiltViewModel
+class SignInViewModel @Inject constructor(private val repository: LoginRepository): ViewModel() {
     val _uiState = MutableStateFlow(SignInState())
     val uiState = _uiState.asStateFlow()
 
@@ -32,9 +35,6 @@ class SignInViewModel(private val repository: LoginRepository): ViewModel() {
         }
         _uiState.value = _uiState.value.copy(isLoginSuccess = isSuccess)
         return isSuccess
-    }
-    fun isAutoLoggedIn(): Boolean {
-        return repository.getLoginState()
     }
 
 }
