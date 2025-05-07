@@ -9,19 +9,19 @@ import kotlinx.serialization.Serializable
 import org.sopt.at.core.Route
 import org.sopt.at.presentation.mypage.MyPageRoute
 
-fun NavController.navigateToMyPage(navOptions: NavOptions) {
+fun NavController.navigateToMyPage(navOptions: NavOptions? = null) {
     navigate(MyPage, navOptions)
 }
 
 fun NavGraphBuilder.myPageGraph(
     naviGateToSignIn: () -> Unit,
-    naviGateToHome: () -> Unit,
+    naviGateToBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<MyPage> {
         MyPageRoute(
             navigateToSignIn = naviGateToSignIn,
-            navigateToHome = naviGateToHome,
+            navigateToBack = naviGateToBack,
             modifier = modifier
         )
     }
