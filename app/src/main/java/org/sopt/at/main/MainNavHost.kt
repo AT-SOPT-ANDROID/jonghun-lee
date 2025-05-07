@@ -51,13 +51,13 @@ fun MainNavHost(
         )
         signUpGraph(
             modifier = modifier,
-            popBackStack = navigator::popBackStack,
+            popBackStack = navigator::navigateBack,
             navigateToSignIn = navigator::navigateToSignIn
         )
         myPageGraph(
             modifier = modifier,
             naviGateToSignIn = navigator::navigateToSignIn,
-            naviGateToHome = navigator::navigateToHome
+            naviGateToBack = navigator::navigateBack
         )
         splashGraph(
             navigateToSignIn = navigator::navigateToSignIn,

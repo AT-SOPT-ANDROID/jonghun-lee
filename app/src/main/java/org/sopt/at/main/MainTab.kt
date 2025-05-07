@@ -11,16 +11,40 @@ import org.sopt.at.presentation.live.navigation.Live
 import org.sopt.at.presentation.search.navigation.Search
 import org.sopt.at.presentation.shorts.navigation.Shorts
 
-enum class MainTab(@DrawableRes val icon: Int, internal val contentDescription : String, val route: MainTabRoute) {
-    HOME(icon = R.drawable.ic_bottom_home, contentDescription = "HOME", route = Home),
-    SHORTS(icon = R.drawable.ic_bottom_shorts, contentDescription = "Shorts", route = Shorts),
-    LIVE(icon = R.drawable.ic_bottom_live, contentDescription = "LIVE", route = Live),
-    SEARCH(icon = R.drawable.ic_bottom_search, contentDescription = "SEARCH", route = Search),
-    HISTORY(icon = R.drawable.ic_bottom_history, contentDescription = "HISTORY", route = History);
+enum class MainTab(
+    @DrawableRes val icon: Int,
+    internal val contentDescription : String,
+    val route: MainTabRoute
+) {
+    HOME(
+        icon = R.drawable.ic_bottom_home,
+        contentDescription = "HOME",
+        route = Home
+    ),
+    SHORTS(
+        icon = R.drawable.ic_bottom_shorts,
+        contentDescription = "Shorts",
+        route = Shorts
+    ),
+    LIVE(
+        icon = R.drawable.ic_bottom_live,
+        contentDescription = "LIVE",
+        route = Live
+    ),
+    SEARCH(
+        icon = R.drawable.ic_bottom_search,
+        contentDescription = "SEARCH",
+        route = Search
+    ),
+    HISTORY(
+        icon = R.drawable.ic_bottom_history,
+        contentDescription = "HISTORY",
+        route = History
+    );
 
     companion object {
         @Composable
-        fun find(predicate: @Composable (Route) -> Boolean): MainTab? {
+        fun find(predicate: @Composable (MainTabRoute) -> Boolean): MainTab? {
             return entries.find { predicate(it.route) }
         }
 

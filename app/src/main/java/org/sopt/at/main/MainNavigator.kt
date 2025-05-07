@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -26,59 +25,45 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
+    // TODO: has route 쓰기
     val currentTab: MainTab?
         @Composable get() = MainTab.entries.find { tab ->
             currentDestination?.route == tab.route::class.qualifiedName
         }
 
+
+
     //바텀 네비게이션 화면 이동
     fun navigate(tab: MainTab) {
-
-        val navOptions = if (tab == MainTab.HOME) {
-            navOptions {
-                popUpTo(MainTab.HOME.route) {
-                    inclusive = true
+        MainTab.HOME.route.let {
+            val navOptions = navOptions {
+                popUpTo(it) {
+                    if (tab == MainTab.HOME) {
+                        inclusive = true
+                    } else {
+                        saveState = true
+                    }
                 }
                 launchSingleTop = true
-            }
-        } else {
-            navOptions {
-                popUpTo(MainTab.HOME.route) {
-                    saveState = true
+                if (tab != MainTab.HOME) {
+                    restoreState = true
                 }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
-        when (tab) {
-            MainTab.HOME -> {
-                navController.navigateToHome(navOptions)
             }
 
-            MainTab.SHORTS -> {
-                navController.navigateToShorts(navOptions)
-            }
-
-            MainTab.LIVE -> {
-                navController.navigateToLive(navOptions)
-            }
-
-            MainTab.SEARCH -> {
-                navController.navigateToSearch(navOptions)
-            }
-
-            MainTab.HISTORY -> {
-                navController.navigateToHistory(navOptions)
+            when (tab) {
+                MainTab.HOME -> navController.navigateToHome(navOptions)
+                MainTab.SHORTS -> navController.navigateToShorts(navOptions)
+                MainTab.LIVE -> navController.navigateToLive(navOptions)
+                MainTab.SEARCH -> navController.navigateToSearch(navOptions)
+                MainTab.HISTORY -> navController.navigateToHistory(navOptions)
             }
         }
     }
 
-    fun navigateToHome(navOptions: NavOptions? = null) {
+    fun navigateToHome() {
         navController.navigateToHome(
-            navOptions ?: navOptions {
-                popUpTo(navController.graph.id) {
-                    inclusive = true
-                }
+            navOptions {
+                popUpTo(navController.graph.id) { inclusive = true }
             }
         )
     }
@@ -109,18 +94,20 @@ class MainNavigator(
 
     }
 
-    fun popBackStack() {
+    fun navigateBack() {
         navController.popBackStack()
     }
 
+
     @Composable
-    fun showBottomNav(): Boolean {
+    fun showBottomNavBar(): Boolean {
         val currentRoute = currentDestination?.route ?: return false
         return MainTab.entries.any { tab ->
             currentRoute == tab.route::class.qualifiedName
         }
     }
 }
+
 @Composable
 fun rememberMainNavigator(
     navController: NavHostController = rememberNavController(),

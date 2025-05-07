@@ -8,6 +8,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kotlinx.collections.immutable.toPersistentList
 import org.sopt.at.main.component.BottomNavigationBar
 
 
@@ -17,11 +18,11 @@ fun MainScreen(
 ) {
     Scaffold(
         bottomBar = {
-            if (navigator.showBottomNav()) {
+            if (navigator.showBottomNavBar()) {
                 BottomNavigationBar(
-                    tabs = MainTab.entries.toList(),
+                    tabs = MainTab.entries.toPersistentList(),
                     currentTab = navigator.currentTab,
-                    onTabSelected = navigator::navigate
+                    onTabSelected = navigator::navigate,
                 )
             }
         },
