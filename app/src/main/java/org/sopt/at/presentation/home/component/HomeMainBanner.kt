@@ -9,10 +9,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import org.sopt.at.presentation.home.model.MainBannerItem
 
 @Composable
 fun HomeMainBanner(
-    slideList: List<Int>,
+    slideList: ImmutableList<MainBannerItem>,
     modifier: Modifier = Modifier
 ) {
     val slideState = rememberPagerState(
@@ -29,7 +31,7 @@ fun HomeMainBanner(
                 .fillMaxWidth()
                 .height(500.dp)
         ) { page ->
-            HomeMainSlideItem(image = slideList[page])
+            HomeMainSlideItem(image = slideList[page].image)
         }
 
     }

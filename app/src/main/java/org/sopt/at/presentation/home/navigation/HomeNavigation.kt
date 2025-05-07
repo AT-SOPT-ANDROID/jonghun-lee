@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import org.sopt.at.core.MainTabRoute
 import org.sopt.at.presentation.home.HomeRoute
 
-fun NavController.navigateToHome(navOptions: NavOptions) {
+fun NavController.navigateToHome(navOptions: NavOptions? = null) {
     navigate(Home, navOptions)
 }
 fun NavGraphBuilder.homeGraph(

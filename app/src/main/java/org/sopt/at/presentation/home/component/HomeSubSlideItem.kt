@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.sopt.at.presentation.home.data.SubBannerItem
+import org.sopt.at.presentation.home.model.SubBannerItem
 
 //티빙 top 20, 지금 방영 중인 콘텐츠에 들어갈 아이템
 @Composable

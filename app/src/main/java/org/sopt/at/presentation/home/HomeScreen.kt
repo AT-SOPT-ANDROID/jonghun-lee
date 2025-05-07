@@ -19,7 +19,7 @@ import org.sopt.at.presentation.home.component.HomeMainBanner
 import org.sopt.at.presentation.home.component.HomeSubBanner
 import org.sopt.at.presentation.home.component.HomeTabLayout
 import org.sopt.at.presentation.home.component.HomeTopBar
-import org.sopt.at.presentation.home.data.TabItem
+import org.sopt.at.presentation.home.model.TabItem
 
 @Composable
 fun HomeRoute(
@@ -32,7 +32,7 @@ fun HomeRoute(
         modifier = modifier,
         uiState = uiState,
         onTabSelected = viewModel::onTabSelected,
-        navigateToMyPage = navigateToMyPage,
+        onMyPageClick = navigateToMyPage,
     )
 }
 @OptIn(ExperimentalFoundationApi::class)
@@ -41,7 +41,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
     onTabSelected: (TabItem) -> Unit,
-    navigateToMyPage: () -> Unit,
+    onMyPageClick: () -> Unit,
 ) {
     Column(modifier = modifier
         .background(Color.Black)) {
@@ -54,7 +54,7 @@ fun HomeScreen(
             item {
                 HomeTopBar(
                     modifier = Modifier,
-                    onItemClick = navigateToMyPage
+                    onItemClick = onMyPageClick
                 )
             }
             stickyHeader {
@@ -68,7 +68,7 @@ fun HomeScreen(
                 )
 
             }
-            item { HomeMainBanner(slideList = uiState.mainBannerList) }
+            item { HomeMainBanner(slideList = uiState.mainBannerItems) }
             item {
                 HomeSubBanner(
                     title = uiState.rankedTitle,
