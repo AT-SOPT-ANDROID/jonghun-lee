@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import org.sopt.at.core.MainTabRoute
 import org.sopt.at.presentation.search.SearchRoute
 
-fun NavController.navigateToSearch(navOptions: NavOptions){
+fun NavController.navigateToSearch(navOptions: NavOptions? = null){
     navigate(Search, navOptions)
 }
 fun NavGraphBuilder.searchGraph(modifier: Modifier = Modifier){

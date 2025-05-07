@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import org.sopt.at.core.MainTabRoute
 import org.sopt.at.presentation.history.HistoryRoute
 
-fun NavController.navigateToHistory(navOptions: NavOptions){
+fun NavController.navigateToHistory(navOptions: NavOptions? = null){
     navigate(History,navOptions)
 }
 fun NavGraphBuilder.historyGraph(modifier: Modifier = Modifier){

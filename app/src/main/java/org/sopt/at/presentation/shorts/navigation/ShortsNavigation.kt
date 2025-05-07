@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import org.sopt.at.core.MainTabRoute
 import org.sopt.at.presentation.shorts.ShortsRoute
 
-fun NavController.navigateToShorts(navOptions: NavOptions){
+fun NavController.navigateToShorts(navOptions: NavOptions? = null){
     navigate(Shorts,navOptions)
 }
 fun NavGraphBuilder.shortsGraph(
