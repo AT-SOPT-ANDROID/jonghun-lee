@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import org.sopt.at.core.MainTabRoute
 import org.sopt.at.presentation.live.LiveRoute
 
-fun NavController.navigateToLive(navOptions: NavOptions){
+fun NavController.navigateToLive(navOptions: NavOptions? = null){
     navigate(Live, navOptions)
 }
 
