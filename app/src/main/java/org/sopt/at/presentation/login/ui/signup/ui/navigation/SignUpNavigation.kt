@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import org.sopt.at.core.Route
 import org.sopt.at.presentation.login.ui.signup.SignUpRoute
 
-fun NavController.navigateToSignUp(navOptions: NavOptions) {
+fun NavController.navigateToSignUp(navOptions: NavOptions? = null) {
     navigate(SignUp, navOptions)
 
 }
@@ -22,7 +22,7 @@ fun NavGraphBuilder.signUpGraph(
     composable<SignUp> {
         SignUpRoute(
             modifier = modifier,
-            popBackStack = popBackStack,
+            onBackClick = popBackStack,
             navigateToSignIn = navigateToSignIn
         )
     }

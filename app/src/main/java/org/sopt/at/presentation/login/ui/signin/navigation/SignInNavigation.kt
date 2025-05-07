@@ -10,7 +10,7 @@ import org.sopt.at.core.Route
 import org.sopt.at.presentation.login.ui.signin.SignInRoute
 
 
-fun NavController.navigateToSignIn(navOptions: NavOptions) {
+fun NavController.navigateToSignIn(navOptions: NavOptions? = null) {
     navigate(SignIn, navOptions)
 }
 
@@ -22,8 +22,8 @@ fun NavGraphBuilder.signInGraph(
 
     composable<SignIn> {
         SignInRoute(
-            navigateToHome = navigateToHome,
-            navigateToSignUp = navigateToSingUp
+            onSignInClick = navigateToHome,
+            onSignUpClick = navigateToSingUp
         )
     }
 }

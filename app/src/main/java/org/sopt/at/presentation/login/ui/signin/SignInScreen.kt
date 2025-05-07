@@ -15,16 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,36 +36,62 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.launch
 import org.sopt.at.presentation.login.component.logintextfield.LoginTextField
 import org.sopt.at.ui.theme.TvingGray
 import org.sopt.at.ui.theme.TvingRed
 
 @Composable
 fun SignInRoute(
-    navigateToHome: () -> Unit,
-    navigateToSignUp: () -> Unit,
+    onSignUpClick: () -> Unit,
+    onSignInClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
-) {
-
-    SignInScreen(
-        viewModel = viewModel,
-        navigateToSignUp = navigateToSignUp,
-        navigateToHome = navigateToHome
-    )
-
-}
-
-@Composable
-fun SignInScreen(
-    viewModel: SignInViewModel,
-    navigateToSignUp: () -> Unit,
-    navigateToHome: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(uiState.isLoginSuccess) {
+        if (uiState.isLoginSuccess) {
+            onSignInClick()
+        }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { event ->
+            when (event) {
+                is SignInEvent.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(event.message)
+                }
+            }
+        }
+    }
+
+    SignInScreen(
+        userId = uiState.userId,
+        userPassword = uiState.userPassword,
+        isPasswordVisible = uiState.isPasswordVisible,
+        isButtonEnabled = uiState.isButtonEnabled,
+        onIdChange = viewModel::updateUserId,
+        onPasswordChange = viewModel::updateUserPassword,
+        onVisibilityToggle = viewModel::togglePasswordVisiblity,
+        onLoginClick = viewModel::login,
+        onSignUpClick = onSignUpClick,
+        snackBarHostState = snackBarHostState
+    )
+}
+
+
+@Composable
+fun SignInScreen(
+    userId: String,
+    userPassword: String,
+    isPasswordVisible: Boolean,
+    isButtonEnabled: Boolean,
+    onIdChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onVisibilityToggle: () -> Unit,
+    onLoginClick: () -> Unit,
+    onSignUpClick: () -> Unit,
+    snackBarHostState: SnackbarHostState
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -78,55 +103,40 @@ fun SignInScreen(
                 .padding(horizontal = 15.dp)
         ) {
             Text(
-                modifier = Modifier.padding(top = 40.dp),
                 text = "TVING ID 로그인",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
+                modifier = Modifier.padding(top = 40.dp)
             )
             LoginTextField(
-                value = uiState.userId,
-                onValueChange = viewModel::updateUserId,
+                value = userId,
+                onValueChange = onIdChange,
                 placeholder = "아이디",
                 modifier = Modifier.padding(top = 25.dp)
-
             )
             LoginTextField(
-                value = uiState.userPassword,
-                onValueChange = viewModel::updateUserPassword,
+                value = userPassword,
+                onValueChange = onPasswordChange,
                 placeholder = "비밀번호",
-                modifier = Modifier.padding(top = 15.dp),
                 isPassword = true,
-                passwordVisible = uiState.isPasswordVisible,
-                onVisibilityToggle = viewModel::togglePasswordVisiblity
+                passwordVisible = isPasswordVisible,
+                onVisibilityToggle = onVisibilityToggle,
+                modifier = Modifier.padding(top = 15.dp)
             )
-            val isButtonEnabled = uiState.userId.isNotBlank() && uiState.userPassword.isNotBlank()
+
             Button(
-                onClick = {
-                    val success = viewModel.login()
-                    if (success) {
-                        navigateToHome()
-                    } else {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "아이디 또는 비밀번호를 확인해주세요.",
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                    }
-                },
+                onClick = onLoginClick,
                 enabled = isButtonEnabled,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 25.dp, bottom = 30.dp),
                 shape = RoundedCornerShape(8.dp),
                 contentPadding = PaddingValues(vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isButtonEnabled) TvingRed else TvingGray,
-                    contentColor = Color.White,
-                    disabledContainerColor = TvingGray,
-                    disabledContentColor = Color.LightGray
-                )
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 25.dp, bottom = 30.dp)
             ) {
                 Text(
                     text = "로그인하기",
@@ -135,43 +145,28 @@ fun SignInScreen(
                     color = Color.LightGray
                 )
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Text(
-                    text = "아이디 찾기",
-                    color = Color.LightGray,
-                    fontSize = 16.sp
-                )
-                VerticalDivider(
-                    modifier = Modifier.height(22.dp),
-                    color = Color.DarkGray,
-                    thickness = 1.5.dp
-                )
-                Text(
-                    text = "비밀번호 찾기",
-                    color = Color.LightGray,
-                    fontSize = 16.sp
-                )
-                VerticalDivider(
-                    modifier = Modifier.height(22.dp),
-                    color = Color.DarkGray,
-                    thickness = 1.5.dp
-                )
+                Text("아이디 찾기", color = Color.LightGray, fontSize = 16.sp)
+                VerticalDivider(Modifier.height(22.dp), color = Color.DarkGray, thickness = 1.5.dp)
+                Text("비밀번호 찾기", color = Color.LightGray, fontSize = 16.sp)
+                VerticalDivider(Modifier.height(22.dp), color = Color.DarkGray, thickness = 1.5.dp)
                 Text(
                     text = "회원가입",
                     color = Color.LightGray,
                     fontSize = 16.sp,
-                    modifier = Modifier.clickable {
-                        navigateToSignUp()
-                    }
+                    modifier = Modifier.clickable { onSignUpClick() }
                 )
             }
+
             GooglePolicyText(modifier = Modifier.padding(top = 30.dp))
         }
+
         SnackbarHost(
             hostState = snackBarHostState,
             modifier = Modifier
@@ -180,13 +175,13 @@ fun SignInScreen(
                 .padding(15.dp)
         )
     }
-
 }
+
 
 
 //AnnotatedString으로 특정 텍스트에 underline 과 스타일 주기
 @Composable
-fun GooglePolicyText(
+private fun GooglePolicyText(
     modifier: Modifier = Modifier
 ) {
     val policyText = buildAnnotatedString {
