@@ -1,4 +1,4 @@
-package org.sopt.at.di
+package org.sopt.at.data.di
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object LoginsModule {
+object PreferencesModule {
     @Provides
     @Singleton
     fun provideSharedPreferences(
