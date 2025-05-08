@@ -1,11 +1,11 @@
-package org.sopt.at.data.di
+package org.sopt.at.di
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import org.sopt.at.data.repository.UserRepository
-import org.sopt.at.data.repository.UserRepositoryImpl
+import org.sopt.at.domain.repository.UserRepository
+import org.sopt.at.domain.repository.UserRepositoryImpl
 import javax.inject.Singleton
 
 @Module
