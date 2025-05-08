@@ -32,12 +32,12 @@ fun MyPageRoute(
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
-    val userId by viewModel.userId.collectAsState()
+    val nickname by viewModel.nickname.collectAsState()
     LaunchedEffect(Unit) {
-        viewModel.getUserInfo()
+        viewModel.nickname
     }
     MyPageScreen(
-        userId = userId,
+        nickname = nickname,
         onLogout = {
             viewModel.logOut()
             navigateToSignIn()
@@ -50,7 +50,7 @@ fun MyPageRoute(
 @Composable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
-    userId: String?,
+    nickname: String?,
     onLogout: () -> Unit,
     onBackClick: () -> Unit,
 ) {
@@ -104,7 +104,7 @@ fun MyPageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 100.dp),
-                text = "안녕하세요 : $userId 님",
+                text = "안녕하세요 : $nickname 님",
                 fontSize = 30.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center

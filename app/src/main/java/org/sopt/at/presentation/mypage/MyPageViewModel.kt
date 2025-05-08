@@ -7,21 +7,38 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.sopt.at.data.repository.UserRepository
+import org.sopt.at.domain.model.NickNameRequestInfo
+import org.sopt.at.domain.repository.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor(private val repository: UserRepository):ViewModel() {
-    val _userId = MutableStateFlow<String?>(null)
-    val userId: StateFlow<String?> = _userId.asStateFlow()
+class MyPageViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
+
+    private val _userId = MutableStateFlow<Long?>(null)
+    val userId: StateFlow<Long?> = _userId.asStateFlow()
+
+    private val _nickname = MutableStateFlow("")
+    val nickname: StateFlow<String> = _nickname.asStateFlow()
 
     init {
-        getUserInfo()
+        getNickName()
     }
-    fun getUserInfo(){
-        _userId.value = repository.getUserId()
+
+    private fun getNickName() {
+        val id = repository.getUserId()
+        _userId.value = id
+        fetchNickname(id)
     }
-    fun logOut(){
+
+    private fun fetchNickname(userId: Long) {
+        viewModelScope.launch {
+            repository.getNickname(NickNameRequestInfo(userId))
+                .onSuccess { _nickname.value = it.nickname }
+                .onFailure { _nickname.value = "닉네임 불러오기 실패" }
+        }
+    }
+
+    fun logOut() {
         viewModelScope.launch {
             repository.clearUserData()
         }
