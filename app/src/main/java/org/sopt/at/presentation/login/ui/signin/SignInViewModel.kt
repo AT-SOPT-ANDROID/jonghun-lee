@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.sopt.at.data.repository.UserRepository
+import org.sopt.at.domain.model.SignInRequestInfo
+import org.sopt.at.domain.repository.UserRepository
 import javax.inject.Inject
 
 sealed class SignInEvent {
@@ -50,17 +51,17 @@ class SignInViewModel @Inject constructor(private val repository: UserRepository
         viewModelScope.launch {
             val id = _uiState.value.userId
             val password = _uiState.value.userPassword
-            val isSuccess = repository.checkUser(id, password)
 
-            if (isSuccess) {
-                repository.setLoginState(true)
-            } else {
-                _sideEffect.emit(SignInEvent.ShowSnackBar("아이디 또는 비밀번호를 확인해주세요"))
-            }
+            val result = repository.signIn(SignInRequestInfo(id, password))
 
-            _uiState.value = _uiState.value.copy(isLoginSuccess = isSuccess)
+            result
+                .onSuccess {
+                    _uiState.value = _uiState.value.copy(isLoginSuccess = true)
+                }
+                .onFailure {
+                    _sideEffect.emit(SignInEvent.ShowSnackBar(it.message ?: "로그인에 실패했습니다."))
+                    _uiState.value = _uiState.value.copy(isLoginSuccess = false)
+                }
         }
     }
-
-
 }
