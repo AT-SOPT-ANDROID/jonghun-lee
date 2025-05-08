@@ -59,7 +59,7 @@ class SignInViewModel @Inject constructor(private val repository: UserRepository
                     _uiState.value = _uiState.value.copy(isLoginSuccess = true)
                 }
                 .onFailure {
-                    _sideEffect.emit(SignInEvent.ShowSnackBar(it.message ?: "로그인에 실패했습니다."))
+                    _sideEffect.emit(SignInEvent.ShowSnackBar("아이디 또는 비밀번호를 확인해주세요."))
                     _uiState.value = _uiState.value.copy(isLoginSuccess = false)
                 }
         }
