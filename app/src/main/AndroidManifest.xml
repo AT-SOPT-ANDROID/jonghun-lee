@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".AtSoptApplication"
@@ -16,6 +17,7 @@
         <activity
             android:name=".main.MainActivity"
             android:exported="true"
+            android:label="@string/app_name"
             android:theme="@style/Theme.ATSOPTANDROID">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
