@@ -1,52 +1,89 @@
 package org.sopt.at.presentation.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import org.sopt.at.navigation.NavItem
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.sopt.at.presentation.home.component.HomeMainBanner
 import org.sopt.at.presentation.home.component.HomeSubBanner
 import org.sopt.at.presentation.home.component.HomeTabLayout
 import org.sopt.at.presentation.home.component.HomeTopBar
-import org.sopt.at.presentation.home.data.homeSlideItem
-import org.sopt.at.presentation.home.data.homeSubDummyItem
+import org.sopt.at.presentation.home.model.TabItem
 
 @Composable
-fun HomeScreen(rootNavController: NavHostController) {
-    Column() {
-        HomeTopBar(modifier = Modifier,
-            onItemClick = {
-            rootNavController.navigate(NavItem.MY)
-        })
-        // TODO: Sticky Header 구현
-        HomeTabLayout()
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(15.dp),
+fun HomeRoute(
+    modifier: Modifier = Modifier,
+    navigateToMyPage: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState
+    HomeScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onTabSelected = viewModel::onTabSelected,
+        onMyPageClick = navigateToMyPage,
+    )
+}
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    uiState: HomeUiState,
+    onTabSelected: (TabItem) -> Unit,
+    onMyPageClick: () -> Unit,
+) {
+    Column(modifier = modifier
+        .background(Color.Black)) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(15.dp),
             contentPadding = PaddingValues(vertical = 10.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            item { HomeMainBanner(slideList = homeSlideItem) }
+            item {
+                HomeTopBar(
+                    modifier = Modifier,
+                    onItemClick = onMyPageClick
+                )
+            }
+            stickyHeader {
+                HomeTabLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Black)
+                        .padding(10.dp),
+                    selectedTab = uiState.selectedTab,
+                    onTabSelected = onTabSelected,
+                )
+
+            }
+            item { HomeMainBanner(slideList = uiState.mainBannerItems) }
             item {
                 HomeSubBanner(
-                    title = "오늘의 티빙 TOP 20",
-                    slideList = homeSubDummyItem,
+                    title = uiState.rankedTitle,
+                    slideList = uiState.subBannerItems,
                     isRank = true
                 )
             }
 
             item {
                 HomeSubBanner(
-                    title = "지금 방영 중인 콘텐츠",
-                    slideList = homeSubDummyItem,
+                    title = uiState.unrankedTitle,
+                    slideList = uiState.subBannerItems,
                     isRank = false
                 )
             }
-
         }
     }
 }

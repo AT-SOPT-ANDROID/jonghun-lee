@@ -1,5 +1,6 @@
 package org.sopt.at.presentation.live
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,10 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun LiveScreen() {
-    Column(modifier = Modifier.fillMaxSize(),
+fun LiveRoute(modifier: Modifier = Modifier) {
+    LiveScreen(modifier = modifier)
+}
+
+@Composable
+fun LiveScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Center
+    ) {
         Text(
             text = "live Screen",
             color = Color.White

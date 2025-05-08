@@ -17,10 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.sopt.at.presentation.home.data.SubBannerItem
+import kotlinx.collections.immutable.ImmutableList
+import org.sopt.at.presentation.home.model.SubBannerItem
 
 @Composable
-fun HomeSubBanner(title: String, slideList: List<SubBannerItem>,isRank: Boolean ) {
+fun HomeSubBanner(title: String, slideList: ImmutableList<SubBannerItem>, isRank: Boolean ) {
 
     Row(
         modifier = Modifier
