@@ -2,7 +2,7 @@ package org.sopt.at.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.sopt.at.data.repository.UserRepository
+import org.sopt.at.domain.repository.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
