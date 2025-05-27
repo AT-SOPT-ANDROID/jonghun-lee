@@ -49,41 +49,61 @@ fun SignUpRoute(
 
     SignUpScreen(
         modifier = modifier,
-        isPasswordStage = uiState.isPassword,
+        currentStep = uiState.currentStep,
         userId = uiState.userId,
         userPassword = uiState.userPassword,
+        nickname = uiState.nickname,
         isPasswordVisible = uiState.isPasswordVisible,
         onBackClick = onBackClick,
         onUserIdChange = viewModel::updateUserId,
         onUserPasswordChange = viewModel::updateUserPassword,
+        onNicknameChange = viewModel::updateNickname,
         onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
         onNextClick = {
-            if (!uiState.isPassword) {
-                if (!TvingValidator.validateId(uiState.userId)) {
-                    Toast.makeText(context, "아이디 형식이 이상해요.", Toast.LENGTH_SHORT).show()
-                    return@SignUpScreen
+            when (uiState.currentStep) {
+                SignUpStep.ID -> {
+                    if (!TvingValidator.validateId(uiState.userId)) {
+                        Toast.makeText(context, "아이디 형식이 이상해요.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.nextStep()
+                    }
                 }
-                viewModel.isPassword()
-            } else {
-                if (!TvingValidator.validatePassword(uiState.userPassword)) {
-                    Toast.makeText(context, "비밀번호 형식이 이상해요.", Toast.LENGTH_SHORT).show()
-                    return@SignUpScreen
+
+                SignUpStep.PASSWORD -> {
+                    if (!TvingValidator.validatePassword(uiState.userPassword)) {
+                        Toast.makeText(context, "비밀번호 형식이 이상해요.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.nextStep()
+                    }
                 }
-                viewModel.signUp()
+                // TODO: 회원가입 호출 로직 수정
+                SignUpStep.NICKNAME -> {
+                    if (!TvingValidator.validateNickname(uiState.nickname)) {
+                        Toast.makeText(context, "닉네임 형식이 이상해요.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.signUp { message ->
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
             }
-        })
+        }
+    )
 }
 
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    isPasswordStage: Boolean,
+    currentStep: SignUpStep,
     userId: String,
     userPassword: String,
+    nickname: String,
     isPasswordVisible: Boolean,
     onBackClick: () -> Unit,
     onUserIdChange: (String) -> Unit,
     onUserPasswordChange: (String) -> Unit,
+    onNicknameChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
     onNextClick: () -> Unit
 ) {
@@ -94,10 +114,10 @@ fun SignUpScreen(
             .padding(horizontal = 15.dp),
         containerColor = Color.Black,
         bottomBar = {
-            val isButtonEnabled = if (!isPasswordStage) {
-                userId.isNotBlank()
-            } else {
-                userPassword.isNotBlank()
+            val isButtonEnabled = when (currentStep) {
+                SignUpStep.ID -> userId.isNotBlank()
+                SignUpStep.PASSWORD -> userPassword.isNotBlank()
+                SignUpStep.NICKNAME -> nickname.isNotBlank()
             }
 
             Button(
@@ -134,42 +154,65 @@ fun SignUpScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 30.dp),
-                text = if (!isPasswordStage) "아이디를 입력해주세요." else "비밀번호를 입력해주세요.",
+                text = when (currentStep) {
+                    SignUpStep.ID -> "아이디를 입력해주세요."
+                    SignUpStep.PASSWORD -> "비밀번호를 입력해주세요."
+                    SignUpStep.NICKNAME -> "닉네임을 입력해주세요."
+                },
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
 
-            if (!isPasswordStage) {
-                LoginTextField(
-                    value = userId,
-                    onValueChange = onUserIdChange,
-                    placeholder = "아이디",
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-                Text(
-                    text = "영문 소문자 또는 영문 소문, 숫자 조합 6~12자리",
-                    color = TvingGray,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 10.dp)
-                )
-            } else {
-                LoginTextField(
-                    value = userPassword,
-                    onValueChange = onUserPasswordChange,
-                    placeholder = "비밀번호",
-                    modifier = Modifier.padding(top = 20.dp),
-                    isPassword = true,
-                    passwordVisible = isPasswordVisible,
-                    onVisibilityToggle = onTogglePasswordVisibility
-                )
-                Text(
-                    text = "영문 숫자, 특수문자(~!@#\$%^&*)조합 8~15자리",
-                    color = TvingGray,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 10.dp)
-                )
+            when (currentStep) {
+                SignUpStep.ID -> {
+                    LoginTextField(
+                        value = userId,
+                        onValueChange = onUserIdChange,
+                        placeholder = "아이디",
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+                    Text(
+                        text = "대문자 소문자 숫자 조합 8~20자리",
+                        color = TvingGray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
+
+                SignUpStep.PASSWORD -> {
+                    LoginTextField(
+                        value = userPassword,
+                        onValueChange = onUserPasswordChange,
+                        placeholder = "비밀번호",
+                        modifier = Modifier.padding(top = 20.dp),
+                        isPassword = true,
+                        passwordVisible = isPasswordVisible,
+                        onVisibilityToggle = onTogglePasswordVisibility
+                    )
+                    Text(
+                        text = "대문자 소문자 숫자 조합 8~20자리",
+                        color = TvingGray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
+
+                SignUpStep.NICKNAME -> {
+                    LoginTextField(
+                        value = nickname,
+                        onValueChange = onNicknameChange,
+                        placeholder = "닉네임",
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+                    Text(
+                        text = "한글 영문 숫자 조합 1~20자리",
+                        color = TvingGray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
             }
         }
     }
