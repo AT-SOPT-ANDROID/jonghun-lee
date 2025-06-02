@@ -1,21 +1,22 @@
-package org.sopt.at.main
+package org.sopt.at.feature.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import org.sopt.at.presentation.history.navigation.navigateToHistory
-import org.sopt.at.presentation.home.navigation.navigateToHome
-import org.sopt.at.presentation.live.navigation.navigateToLive
-import org.sopt.at.presentation.login.ui.signin.navigation.navigateToSignIn
-import org.sopt.at.presentation.login.ui.signup.ui.navigation.navigateToSignUp
-import org.sopt.at.presentation.mypage.navigation.navigateToMyPage
-import org.sopt.at.presentation.search.navigation.navigateToSearch
-import org.sopt.at.presentation.shorts.navigation.navigateToShorts
-import org.sopt.at.presentation.splash.navigation.Splash
+import org.sopt.at.feature.history.navigation.navigateToHistory
+import org.sopt.at.feature.home.navigation.navigateToHome
+import org.sopt.at.feature.live.navigation.navigateToLive
+import org.sopt.at.feature.login.ui.signin.navigation.navigateToSignIn
+import org.sopt.at.feature.login.ui.signup.ui.navigation.navigateToSignUp
+import org.sopt.at.feature.mypage.navigation.navigateToMyPage
+import org.sopt.at.feature.search.navigation.navigateToSearch
+import org.sopt.at.feature.shorts.navigation.navigateToShorts
+import org.sopt.at.feature.splash.navigation.Splash
 
 class MainNavigator(
     val navController: NavHostController
@@ -25,12 +26,10 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    // TODO: has route 쓰기
     val currentTab: MainTab?
-        @Composable get() = MainTab.entries.find { tab ->
-            currentDestination?.route == tab.route::class.qualifiedName
+        @Composable get() = MainTab.find { tab ->
+            currentDestination?.hasRoute(tab::class) == true
         }
-
 
 
     //바텀 네비게이션 화면 이동
@@ -100,11 +99,8 @@ class MainNavigator(
 
 
     @Composable
-    fun showBottomNavBar(): Boolean {
-        val currentRoute = currentDestination?.route ?: return false
-        return MainTab.entries.any { tab ->
-            currentRoute == tab.route::class.qualifiedName
-        }
+    fun showBottomBar() = MainTab.contains {
+        currentDestination?.hasRoute(it::class) == true
     }
 }
 

@@ -1,4 +1,4 @@
-package org.sopt.at.main
+package org.sopt.at.feature.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kotlinx.collections.immutable.toPersistentList
-import org.sopt.at.main.component.BottomNavigationBar
+import org.sopt.at.feature.main.component.BottomNavigationBar
 
 
 @Composable
@@ -18,13 +18,12 @@ fun MainScreen(
 ) {
     Scaffold(
         bottomBar = {
-            if (navigator.showBottomNavBar()) {
                 BottomNavigationBar(
+                    visible = navigator.showBottomBar(),
                     tabs = MainTab.entries.toPersistentList(),
                     currentTab = navigator.currentTab,
                     onTabSelected = navigator::navigate,
                 )
-            }
         },
         modifier = Modifier
             .background(Color.Black)
